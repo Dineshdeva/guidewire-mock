@@ -43,6 +43,58 @@ public class ApiController {
                 .body(response);
     }
 
+    @PostMapping("businesspartner/messages")
+    public ResponseEntity<String> postMessages1(
+            @RequestBody(required = false) String body,
+            HttpServletRequest request) {
+
+        // Log all headers
+        String headers = Collections.list(request.getHeaderNames())
+                .stream()
+                .map(h -> h + ": " + request.getHeader(h))
+                .collect(Collectors.joining("\n  "));
+
+        log.info("""
+                ──── Incoming POST businesspartner/messages ────
+                Headers:
+                  {}
+                Body:
+                  {}
+                ─────────────────────────────────
+                """, headers, body);
+
+        String response = "{\"status\":\"received\",\"message\":\"Message accepted by Guidewire\"}";
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @PostMapping("fleet/messages")
+    public ResponseEntity<String> postMessages2(
+            @RequestBody(required = false) String body,
+            HttpServletRequest request) {
+
+        // Log all headers
+        String headers = Collections.list(request.getHeaderNames())
+                .stream()
+                .map(h -> h + ": " + request.getHeader(h))
+                .collect(Collectors.joining("\n  "));
+
+        log.info("""
+                ──── Incoming POST fleet/messages ────
+                Headers:
+                  {}
+                Body:
+                  {}
+                ─────────────────────────────────
+                """, headers, body);
+
+        String response = "{\"status\":\"received\",\"message\":\"Message accepted by Guidewire\"}";
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
     @GetMapping("/ping")
     public ResponseEntity<String> getHealth(HttpServletRequest request) {
 
