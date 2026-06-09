@@ -3,6 +3,7 @@ package org.example.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -91,6 +92,32 @@ public class ApiController {
 
         String response = "{\"status\":\"received\",\"message\":\"Message accepted by Guidewire\"}";
         return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    @PostMapping("businesspartnertest/messages")
+    public ResponseEntity<String> postMessages3(
+            @RequestBody(required = false) String body,
+            HttpServletRequest request) {
+
+        // Log all headers
+        String headers = Collections.list(request.getHeaderNames())
+                .stream()
+                .map(h -> h + ": " + request.getHeader(h))
+                .collect(Collectors.joining("\n  "));
+
+        log.info("""
+                ──── Incoming POST businesspartnertest/messages ────
+                Headers:
+                  {}
+                Body:
+                  {}
+                ─────────────────────────────────
+                """, headers, body);
+
+        String response = "{\"status\":\"error\",\"message\":\"Invalid request to businesspartnertest endpoint\"}";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }
