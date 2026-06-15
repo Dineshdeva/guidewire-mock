@@ -122,6 +122,32 @@ public class ApiController {
                 .body(response);
     }
 
+    @PostMapping("errortest/messages")
+    public ResponseEntity<String> errorTest(
+            @RequestBody(required = false) String body,
+            HttpServletRequest request) {
+
+        // Log all headers
+        String headers = Collections.list(request.getHeaderNames())
+                .stream()
+                .map(h -> h + ": " + request.getHeader(h))
+                .collect(Collectors.joining("\n  "));
+
+        log.info("""
+                ──── Incoming POST businesspartnertest/messages ────
+                Headers:
+                  {}
+                Body:
+                  {}
+                ─────────────────────────────────
+                """, headers, body);
+
+        String response = "{\"status\":\"error\",\"message\":\"Invalid request to businesspartnertest endpoint\"}";
+        return ResponseEntity.status(HttpStatus.valueOf(body))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
     @GetMapping("/ping")
     public ResponseEntity<String> getHealth(HttpServletRequest request) {
 
