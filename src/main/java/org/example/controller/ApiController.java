@@ -143,7 +143,7 @@ public class ApiController {
                 """, headers, body);
 
         String response = "{\"status\":\"error\",\"message\":\"Invalid request to businesspartnertest endpoint\"}";
-        return ResponseEntity.status(HttpStatus.valueOf(body))
+        return ResponseEntity.status(HttpStatus.valueOf(Integer.parseInt(body)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }
