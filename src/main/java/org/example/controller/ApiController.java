@@ -12,7 +12,51 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
+
+// DTO Classes
+class JmsProperty {
+    private String name;
+    private String value;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+}
+
+class ErrorTestPayload {
+    private String payloadString;
+    private List<JmsProperty> jmsCustomProperties;
+
+    public String getPayloadString() {
+        return payloadString;
+    }
+
+    public void setPayloadString(String payloadString) {
+        this.payloadString = payloadString;
+    }
+
+    public List<JmsProperty> getJmsCustomProperties() {
+        return jmsCustomProperties;
+    }
+
+    public void setJmsCustomProperties(List<JmsProperty> jmsCustomProperties) {
+        this.jmsCustomProperties = jmsCustomProperties;
+    }
+}
 
 @RestController
 public class ApiController {
@@ -124,7 +168,7 @@ public class ApiController {
 
     @PostMapping("errortest/messages")
     public ResponseEntity<String> errorTest(
-            @RequestBody(required = false) String body,
+            @RequestBody ErrorTestPayload payload,
             HttpServletRequest request) {
 
         // Log all headers
@@ -133,17 +177,27 @@ public class ApiController {
                 .map(h -> h + ": " + request.getHeader(h))
                 .collect(Collectors.joining("\n  "));
 
+        String jmsPropertiesStr = payload.getJmsCustomProperties() != null 
+                ? payload.getJmsCustomProperties()
+                        .stream()
+                        .map(p -> p.getName() + "=" + p.getValue())
+                        .collect(Collectors.joining("\n  "))
+                : "None";
+
         log.info("""
-                ──── Incoming POST businesspartnertest/messages ────
+                ──── Incoming POST errortest/messages ────
                 Headers:
                   {}
-                Body:
+                Payload String:
+                  {}
+                JMS Custom Properties:
                   {}
                 ─────────────────────────────────
-                """, headers, body);
+                """, headers, payload.getPayloadString(), jmsPropertiesStr);
 
-        String response = "{\"status\":\"error\",\"message\":\"Invalid request to businesspartnertest endpoint\"}";
-        return ResponseEntity.status(HttpStatus.valueOf(Integer.parseInt(body)))
+        String response = "{\"status\":\"error\",\"message\":\"Invalid request to errortest endpoint\"}";
+        int statusCode = Integer.parseInt(payload.getPayloadString());
+        return ResponseEntity.status(HttpStatus.valueOf(statusCode))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(response);
     }
